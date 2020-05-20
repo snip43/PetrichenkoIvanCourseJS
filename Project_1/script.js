@@ -1,4 +1,10 @@
-const numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели ? ', '');
+let numberOfFilms;
+
+function start() {
+	while (numberOfFilms == '' || numberOfFilms == null || isNaN(numberOfFilms))
+		numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели ? ', '');
+}
+start();
 
 const personalMovieDB = {
 	count: numberOfFilms,
@@ -9,18 +15,25 @@ const personalMovieDB = {
 }
 
 //-------------------- Решение с помощью for -----------------------------
-for (let i = 1; i <= 2; i++) {
-	const a = prompt('Один из последних просмотренных фильмов?', '');
-	b = prompt('На сколько оцените его ? ', '');
 
-	if (a != null && b != null && a != '' && b != '' && a.length < 50) {
-		personalMovieDB.movies[a] = b;
-		console.log('done');
-	} else {
-		console.log('error');
-		i--;
+function rememberMyFilms() {
+	for (let i = 1; i <= 2; i++) {
+		const a = prompt('Один из последних просмотренных фильмов?', '');
+		b = prompt('На сколько оцените его ? ', '');
+
+		if (a != null && b != null && a != '' && b != '' && a.length < 50) {
+			personalMovieDB.movies[a] = b;
+			console.log('done');
+		} else {
+			console.log('error');
+			i--;
+		}
 	}
 }
+
+rememberMyFilms();
+
+
 // -------------------------------------------------------------------------
 
 //---------------------------Решение с помощью do...while -------------------------
@@ -56,15 +69,18 @@ for (let i = 1; i <= 2; i++) {
 
 //------------------------------------------------
 
-
+function detectPersonalLevel() {
 	if (personalMovieDB.count < 10) {
-	alert('Просмотрено довольно мало фильмов')
-} else if (personalMovieDB.count >= 10 && personalMovieDB.count <= 30) {
-	alert('Вы классический зритель')
-} else if (personalMovieDB.count) {
-	alert('Вы киноман')
-} else {
-	alert('Произошла ошибка')
+		alert('Просмотрено довольно мало фильмов')
+	} else if (personalMovieDB.count >= 10 && personalMovieDB.count <= 30) {
+		alert('Вы классический зритель')
+	} else if (personalMovieDB.count) {
+		alert('Вы киноман')
+	} else {
+		alert('Произошла ошибка')
+	}
 }
+
+detectPersonalLevel();
 
 console.log(personalMovieDB)
