@@ -14,6 +14,8 @@ const personalMovieDB = {
 	privat: false
 }
 
+
+
 //-------------------- Решение с помощью for -----------------------------
 
 function rememberMyFilms() {
@@ -69,6 +71,17 @@ rememberMyFilms();
 
 //------------------------------------------------
 
+// 3 раза отвечаем на вопрос и записываем результаты в массив genres
+function writeYourGenres() {
+	let NumberLoveGenres;
+	for (let i = 1; i <= 3; i++) {
+		personalMovieDB.genres.push(prompt(`Ваш любимый жанр под номером ${i} ?`, ''));
+	}
+}
+
+writeYourGenres();
+//-----------------------------
+
 function detectPersonalLevel() {
 	if (personalMovieDB.count < 10) {
 		alert('Просмотрено довольно мало фильмов')
@@ -83,4 +96,15 @@ function detectPersonalLevel() {
 
 detectPersonalLevel();
 
-console.log(personalMovieDB)
+// Если в privat стоит false - выводим базу данных в консоль
+function showMyDB() {
+	if (!personalMovieDB.privat) {
+		console.log(personalMovieDB)
+	}
+}
+showMyDB();
+
+
+
+
+
