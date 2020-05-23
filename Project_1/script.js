@@ -1,17 +1,17 @@
 let numberOfFilms;
 
-function start() {
-	while (numberOfFilms == '' || numberOfFilms == null || isNaN(numberOfFilms))
-		numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели ? ', '');
-}
-start();
+personalMovieDB.start();
 
 const personalMovieDB = {
-	count: numberOfFilms,
+	count: 0,
 	movies: {},
 	actors: {},
 	genres: [],
 	privat: true,
+	start: () => {
+		while (	personalMovieDB.count == '' || 	personalMovieDB.count == null || isNaN(	personalMovieDB.count))
+		personalMovieDB.count = +prompt('Сколько фильмов вы уже посмотрели ? ', '');
+	},
 	rememberMyFilms: () => {
 		for (let i = 1; i <= 2; i++) {
 			const a = prompt('Один из последних просмотренных фильмов?', '');
@@ -62,16 +62,8 @@ const personalMovieDB = {
 }
 
 personalMovieDB.toggleVisibleMyDB();
-
 //-------------------- Решение с помощью for -----------------------------
-
-// function rememberMyFilms() {
-
-// }
-
 personalMovieDB.rememberMyFilms();
-
-
 // -------------------------------------------------------------------------
 
 //---------------------------Решение с помощью do...while -------------------------
@@ -103,31 +95,15 @@ personalMovieDB.rememberMyFilms();
 // 		i--;
 // 	}
 // }
-
-
 //------------------------------------------------
 
-// 3 раза отвечаем на вопрос и записываем результаты в массив genres
-// function writeYourGenres() {
-
-// }
 
 personalMovieDB.writeYourGenres();
-//-----------------------------
-
-// function detectPersonalLevel() {
-
-// }
-
 personalMovieDB.detectPersonalLevel();
-
-// Если в privat стоит false - выводим базу данных в консоль
-// function showMyDB() {
-// 	if (!personalMovieDB.privat) {
-// 		console.log(personalMovieDB)
-// 	}
-// }
 personalMovieDB.showMyDB();
+
+
+
 
 
 
