@@ -98,7 +98,7 @@ personalMovieDB.rememberMyFilms();
 //------------------------------------------------
 
 
-personalMovieDB.writeYourGenres();
+personalMdcvovieDB.writeYourGenres();
 personalMovieDB.detectPersonalLevel();
 personalMovieDB.showMyDB();
 
