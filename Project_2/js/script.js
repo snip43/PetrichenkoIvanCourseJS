@@ -18,7 +18,8 @@ P.S. Здесь есть несколько вариантов решения з
 
 'use strict';
 
-const movieDB = {
+document.addEventListener('DOMContentLoaded', ()=> {
+	const movieDB = {
     movies: [
 				"Логан",
         "Лига справедливости",
@@ -36,7 +37,7 @@ const interactive_list = document.querySelector('.promo__interactive-list');
 
 reklamaBlock.remove();
 promo__genre.innerHTML = 'ДРАМА'
-bgg.style.backgroundImage = 'url("/img/bg.jpg")';
+bgg.style.backgroundImage = 'url("/Project_2/img/bg.jpg")';
 
 function addMoviesToDom() {
 	movieDB.movies.sort();
@@ -97,6 +98,7 @@ btn.addEventListener('click', (e)=> {
 	}
 })
 //----------------------------------------
+})
 
 
 
