@@ -56,13 +56,17 @@ addMoviesToDom();
 //--------------3) При клике на мусорную корзину - элемент будет удаляться из списка (сложно)------------
 interactive_list.addEventListener('click',(e) => {
 	if(e.target.className == 'delete') {
-		e.target.parentElement.remove()
+		e.target.parentElement.remove();
 	}
 })
 //------------------------------------
+const addForm = document.querySelector('form.add')
+const inputValue = addForm.querySelector('input[type="text"]');
+const btn = addForm.querySelector('button');
 
-const inputValue = document.querySelector('.add input[type="text"]');
-const btn = document.querySelector('.add button');
+	addForm.addEventListener('submit', (e) => {
+		e.preventDefault();
+	})
 
 //---------------- 4) Если в форме стоит галочка "Сделать любимым" - в консоль вывести сообщение: 
 //------------------- "Добавляем любимый фильм"
@@ -92,7 +96,7 @@ btn.addEventListener('click', (e)=> {
 		let newItemFilm = `${itemFilm.slice(0,21)}...`;
 		pushItemAndSort(newItemFilm);     // 5) Фильмы должны быть отсортированы по алфавиту */
 		addMoviesToDom();
-	} else {
+	} else if(itemFilm != ''){
 		pushItemAndSort(itemFilm)
 		addMoviesToDom();
 	}
