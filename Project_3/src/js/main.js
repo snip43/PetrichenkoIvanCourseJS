@@ -148,8 +148,39 @@ function showModalByScroll() {
 
 window.addEventListener('scroll', showModalByScroll);
 
-
-
 //--------------------------------------------------------------
+
+//-----------------Card Item ----------------------------------
+
+class CardItem {
+	constructor(caption, subtitle, descr, price) {
+		this.caption = caption;
+		this.subtitle = subtitle;
+		this.descr = descr;
+		this.price = price;
+	}
+
+	createCard() {
+		const card = document.querySelector('[data-card_1]'),
+					cardCaption = card.querySelector('img'),
+					cardSubtitle = card.querySelector('.menu__item-subtitle'),
+					cardDescr = card.querySelector('.menu__item-descr'),
+					cardPrice = card.querySelector('.menu__item-total span');
+
+		cardCaption.src = this.caption;
+		cardSubtitle.innerHTML = this.subtitle;
+		cardDescr.innerHTML = this.descr;
+		cardPrice.innerHTML = this.price;
+	}
+}
+
+
+
+
+const cardItem_1 = new CardItem(
+	'img/tabs/vegy.jpg',
+	'Меню "Фитнес"',
+	'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 229);
+cardItem_1.createCard();
 
 
