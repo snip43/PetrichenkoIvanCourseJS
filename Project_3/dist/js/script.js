@@ -156,12 +156,12 @@ function addZero(num) {
 }
 
 function insertTimerBlock(selector, endtime) {
-  const timerBlock = document.querySelector(selector);
-  const timerBlockDays = timerBlock.querySelector('#days');
-  const timerBlockHours = timerBlock.querySelector('#hours');
-  const timerBlockMinutes = timerBlock.querySelector('#minutes');
-  const timerBlockSeconds = timerBlock.querySelector('#seconds');
-  const timeInterval = setInterval(updateClock, 1000);
+  const timerBlock = document.querySelector(selector),
+        timerBlockDays = timerBlock.querySelector('#days'),
+        timerBlockHours = timerBlock.querySelector('#hours'),
+        timerBlockMinutes = timerBlock.querySelector('#minutes'),
+        timerBlockSeconds = timerBlock.querySelector('#seconds'),
+        timeInterval = setInterval(updateClock, 1000);
   updateClock();
 
   function updateClock() {
@@ -178,6 +178,45 @@ function insertTimerBlock(selector, endtime) {
 }
 
 insertTimerBlock('.timer', targetDate); //--------------------------------------------------------------
+//------------------------ Modal window -----------------------
+
+const btnConnectMe = document.querySelectorAll('[data-modal]'),
+      modalW = document.querySelector('.modal');
+
+function openModal() {
+  modalW.classList.toggle('show');
+  document.body.classList.add('overFix');
+  clearInterval(banner);
+}
+
+function closeModal() {
+  modalW.classList.toggle('show');
+  document.body.classList.remove('overFix');
+}
+
+btnConnectMe.forEach(item => {
+  item.addEventListener('click', openModal);
+});
+modalW.addEventListener('click', e => {
+  if (e.target.classList.contains('show') || e.target.classList.contains('modal__close')) {
+    closeModal();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.code === 'Escape') {
+    closeModal();
+  }
+});
+const banner = setTimeout(openModal, 10000);
+
+function showModalByScroll() {
+  if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+    openModal();
+    window.removeEventListener('scroll', showModalByScroll);
+  }
+}
+
+window.addEventListener('scroll', showModalByScroll); //--------------------------------------------------------------
 
 /***/ })
 
