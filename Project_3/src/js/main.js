@@ -152,12 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	//-----------------Card Item ----------------------------------
 
 	class CardItem {
-		constructor(caption, alt, subtitle, descr, price, courseChange, parentSelector) {
+		constructor(caption, alt, subtitle, descr, price, courseChange, parentSelector,...classes) {
 			this.caption = caption;
 			this.alt = alt;
 			this.subtitle = subtitle;
 			this.descr = descr;
 			this.price = price;
+			this.classes = classes;
 			this.courseChange = courseChange;
 			this.parent = document.querySelector(parentSelector)
 
@@ -170,20 +171,26 @@ document.addEventListener('DOMContentLoaded', () => {
 		createCard() {
 			this.changeToRub();
 			const cardDiv = document.createElement('div');
+
+			if(this.classes.length ===0) {
+					this.element = 'menu__item';
+					cardDiv.classList.add(this.element)
+			} else {
+				this.classes.forEach(className => cardDiv.classList.add(className));
+			}
+		
+
 			cardDiv.innerHTML = `
-								<div class="menu__item">
-                    <img src="${this.caption}" alt="${this.alt}">
-                    <h3 class="menu__item-subtitle">${this.subtitle}</h3>
-                    <div class="menu__item-descr">${this.descr}</div>
-                    <div class="menu__item-divider"></div>
-                    <div class="menu__item-price">
-                        <div class="menu__item-cost">Цена:</div>
-                        <div class="menu__item-total">
-                            <span>${this.price}</span> руб/день
-                        </div>
-                    </div>
-                </div>
-		`
+				<img src="${this.caption}" alt="${this.alt}">
+				<h3 class="menu__item-subtitle">${this.subtitle}</h3>
+				<div class="menu__item-descr">${this.descr}</div>
+				<div class="menu__item-divider"></div>
+				<div class="menu__item-price">
+						<div class="menu__item-cost">Цена:</div>
+						<div class="menu__item-total">
+								<span>${this.price}</span> руб/день
+						</div>
+				</div>`
 			this.parent.append(cardDiv);
 		}
 	}
