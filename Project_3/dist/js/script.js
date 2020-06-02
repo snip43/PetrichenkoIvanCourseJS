@@ -205,7 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.code === 'Escape') {
       closeModal();
     }
-  }); // const banner = setTimeout( openModal, 10000);
+  });
+  const banner = setTimeout(openModal, 100000);
 
   function showModalByScroll() {
     if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -265,7 +266,46 @@ document.addEventListener('DOMContentLoaded', () => {
   const cardItem_2 = new CardItem('img/tabs/elite.jpg', 'elite', 'Меню “Премиум”', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 20, 70, '.menu .container');
   cardItem_2.createCard();
   const cardItem_3 = new CardItem('img/tabs/post.jpg', 'post', 'Меню "Постное"', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 10, 70, '.menu .container');
-  cardItem_3.createCard();
+  cardItem_3.createCard(); //--------------------------------------------------
+  //-------------------------server -----------------
+
+  const forms = document.querySelectorAll('form');
+  const message = {
+    loading: 'Загрузка...',
+    success: 'Спасибо! Скоро с Вами свяжемся',
+    failure: 'Что-то пошло не так...'
+  };
+  forms.forEach(item => {
+    postData(item);
+  });
+
+  function postData(form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const statusMessage = document.createElement('div');
+      statusMessage.classList.add('status');
+      statusMessage.textContent = message.loading;
+      form.append(statusMessage);
+      const request = new XMLHttpRequest();
+      request.open('POST', 'server.php'); // request.setRequestHeader('Content-type','multipart/form-data')
+
+      const formData = new FormData(form);
+      request.send(formData); //затем отслеживаем "Load" конечную загрузку нашего запроса
+
+      request.addEventListener('load', () => {
+        if (request.status === 200) {
+          console.log(request.response);
+          statusMessage.textContent = message.success;
+          form.reset();
+          setTimeout(() => {
+            statusMessage.remove();
+          }, 2000);
+        } else {
+          statusMessage.textContent = message.failure;
+        }
+      });
+    });
+  }
 });
 
 /***/ })
