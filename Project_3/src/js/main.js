@@ -1,3 +1,6 @@
+import 'core-js';
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
 
@@ -227,58 +230,54 @@ document.addEventListener('DOMContentLoaded', () => {
 	cardItem_3.createCard();
 //--------------------------------------------------
 
-//-------------------------server -----------------
+//-------------------------SERVER(FORMS) -----------------
 
 const forms = document.querySelectorAll('form');
-
 const message = {
-	loading: 'img/form/spinner.svg',
-	success: 'Спасибо! Скоро с Вами свяжемся',
-	failure: 'Что-то пошло не так...'
-}
+		loading: 'img/form/spinner.svg',
+		success: 'Спасибо! Скоро мы с вами свяжемся',
+		failure: 'Что-то пошло не так...'
+};
 
 forms.forEach(item => {
-	postData(item);
-})
+		postData(item);
+});
 
 function postData(form) {
-	form.addEventListener('submit', (e) => {
-		e.preventDefault();
+		form.addEventListener('submit', (e) => {
+				e.preventDefault();
 
-		const statusMessage = document.createElement('img');
-		statusMessage.src = message.loading;
-		statusMessage.style.cssText = `
-			display: block;
-			margin: 0 auto;
-		`;
-		form.insertAdjacentElement('afterend', statusMessage);
+				let statusMessage = document.createElement('img');
+				statusMessage.src = message.loading;
+				statusMessage.style.cssText = `
+						display: block;
+						margin: 0 auto;
+				`;
+				form.insertAdjacentElement('afterend', statusMessage);
+		
+				const formData = new FormData(form);
 
-		const formData = new FormData(form);
+				const object = {};
+				formData.forEach(function(value, key){
+						object[key] = value;
+				});
 
-		fetch('server.php', {
-			method: "POST",
-			// headers: {
-			// 	'Content-type': 'application/json; charset=utf-8'
-			// },
-			body: formData 
-		}).then(data => {   // сервер возвращает data(не json)
-			console.log(data);
-			showThanksModal(message.success);
-			statusMessage.remove();
-		})
-		.catch(()=> {
-			showThanksModal(message.failure);
-		})
-		.finally(()=> {
-			form.reset();
-		})
-
-		// const object = {};
-		// formData.forEach(function(value,key) {
-		// 	object[key] = value;
-		// });
-
-	})
+				fetch('server.php', {
+						method: 'POST',
+						headers: {
+								'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(object)
+				}).then(data => {
+						console.log(data);
+						showThanksModal(message.success);
+						statusMessage.remove();
+				}).catch(() => {
+						showThanksModal(message.failure);
+				}).finally(() => {
+						form.reset();
+				});
+		});
 }
 
 

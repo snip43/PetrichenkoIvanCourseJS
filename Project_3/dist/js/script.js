@@ -271,12 +271,12 @@ document.addEventListener('DOMContentLoaded', () => {
   cardItem_2.createCard();
   const cardItem_3 = new CardItem('img/tabs/post.jpg', 'post', 'Меню "Постное"', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 10, 70, '.menu .container');
   cardItem_3.createCard(); //--------------------------------------------------
-  //-------------------------server -----------------
+  //-------------------------SERVER(FORMS) -----------------
 
   const forms = document.querySelectorAll('form');
   const message = {
     loading: 'img/form/spinner.svg',
-    success: 'Спасибо! Скоро с Вами свяжемся',
+    success: 'Спасибо! Скоро мы с вами свяжемся',
     failure: 'Что-то пошло не так...'
   };
   forms.forEach(item => {
@@ -286,22 +286,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function postData(form) {
     form.addEventListener('submit', e => {
       e.preventDefault();
-      const statusMessage = document.createElement('img');
+      let statusMessage = document.createElement('img');
       statusMessage.src = message.loading;
       statusMessage.style.cssText = `
-			display: block;
-			margin: 0 auto;
-		`;
+						display: block;
+						margin: 0 auto;
+				`;
       form.insertAdjacentElement('afterend', statusMessage);
       const formData = new FormData(form);
+      const object = {};
+      formData.forEach(function (value, key) {
+        object[key] = value;
+      });
       fetch('server.php', {
-        method: "POST",
-        // headers: {
-        // 	'Content-type': 'application/json; charset=utf-8'
-        // },
-        body: formData
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(object)
       }).then(data => {
-        // сервер возвращает data(не json)
         console.log(data);
         showThanksModal(message.success);
         statusMessage.remove();
@@ -309,10 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showThanksModal(message.failure);
       }).finally(() => {
         form.reset();
-      }); // const object = {};
-      // formData.forEach(function(value,key) {
-      // 	object[key] = value;
-      // });
+      });
     });
   }
 
