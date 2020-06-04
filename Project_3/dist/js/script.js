@@ -90,8 +90,12 @@
 /*!************************!*\
   !*** ./src/js/main.js ***!
   \************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+!(function webpackMissingModule() { var e = new Error("Cannot find module 'core-js/modules/es.promise.finally'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 document.addEventListener('DOMContentLoaded', () => {
   // --------Tabs --------------------
@@ -289,31 +293,30 @@ document.addEventListener('DOMContentLoaded', () => {
 			margin: 0 auto;
 		`;
       form.insertAdjacentElement('afterend', statusMessage);
-      const request = new XMLHttpRequest();
-      request.open('POST', 'server.php');
-      request.setRequestHeader('Content-type', 'application/json');
       const formData = new FormData(form);
-      const object = {};
-      formData.forEach(function (value, key) {
-        object[key] = value;
-      });
-      const json = JSON.stringify(object);
-      request.send(json); //затем отслеживаем "Load" конечную загрузку нашего запроса
-
-      request.addEventListener('load', () => {
-        if (request.status === 200) {
-          console.log(request.response);
-          showThanksModal(message.success);
-          form.reset();
-          statusMessage.remove();
-        } else {
-          showThanksModal(message.failure);
-        }
-      });
+      fetch('server.php', {
+        method: "POST",
+        // headers: {
+        // 	'Content-type': 'application/json; charset=utf-8'
+        // },
+        body: formData
+      }).then(data => {
+        // сервер возвращает data(не json)
+        console.log(data);
+        showThanksModal(message.success);
+        statusMessage.remove();
+      }).catch(() => {
+        showThanksModal(message.failure);
+      }).finally(() => {
+        form.reset();
+      }); // const object = {};
+      // formData.forEach(function(value,key) {
+      // 	object[key] = value;
+      // });
     });
   }
 
-  function showThanksModal() {
+  function showThanksModal(message) {
     const prevModalDialog = document.querySelector('.modal__dialog');
     prevModalDialog.classList.add('hide');
     openModal();

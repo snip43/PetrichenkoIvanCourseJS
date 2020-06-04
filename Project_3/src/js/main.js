@@ -253,37 +253,36 @@ function postData(form) {
 		`;
 		form.insertAdjacentElement('afterend', statusMessage);
 
-		const request = new XMLHttpRequest();
-		request.open('POST','server.php');
-
-		request.setRequestHeader('Content-type','application/json')
 		const formData = new FormData(form);
 
-		const object = {};
-		formData.forEach(function(value,key) {
-			object[key] = value;
+		fetch('server.php', {
+			method: "POST",
+			// headers: {
+			// 	'Content-type': 'application/json; charset=utf-8'
+			// },
+			body: formData 
+		}).then(data => {   // сервер возвращает data(не json)
+			console.log(data);
+			showThanksModal(message.success);
+			statusMessage.remove();
+		})
+		.catch(()=> {
+			showThanksModal(message.failure);
+		})
+		.finally(()=> {
+			form.reset();
 		})
 
-		const json = JSON.stringify(object);
+		// const object = {};
+		// formData.forEach(function(value,key) {
+		// 	object[key] = value;
+		// });
 
-		request.send(json);
-
-		//затем отслеживаем "Load" конечную загрузку нашего запроса
-		request.addEventListener('load',()=> {
-			if(request.status === 200) {
-				console.log(request.response);
-				showThanksModal(message.success);
-				form.reset();
-				statusMessage.remove();
-			} else {
-				showThanksModal(message.failure);
-			}
-		})
 	})
 }
 
 
-function showThanksModal() {
+function showThanksModal(message) {
 	const prevModalDialog = document.querySelector('.modal__dialog')
 
 	prevModalDialog.classList.add('hide');
@@ -310,6 +309,6 @@ function showThanksModal() {
 
 
 
-
+	
 })
 
