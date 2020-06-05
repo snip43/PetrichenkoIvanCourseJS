@@ -166,103 +166,45 @@ document.addEventListener('DOMContentLoaded', () => {
 			this.parent = document.querySelector(parentSelector)
 		}
 
-		getData() {
-	
-			})
-		}
-
 		changeToRub() {
 			this.price = this.price * this.courseChange;
 		}
-
 	
 		createCard() {
 			this.changeToRub();
-			const cardDiv = document.createElement('div');
+			const element = document.createElement('div');
 
-			if(this.classes.length ===0) {
-					this.element = 'menu__item';
-					cardDiv.classList.add(this.element)
+			if (this.classes.length === 0) {
+					this.classes = "menu__item";
+					element.classList.add(this.classes);
 			} else {
-				this.classes.forEach(className => cardDiv.classList.add(className));
+					this.classes.forEach(className => element.classList.add(className));
 			}
-
-
-
-		this.getData.forEach(item => {
-			cardDiv.innerHTML = `
-					<img src="${item.img}" alt="${item.altimg}">
-					<h3 class="menu__item-subtitle">${item.title}</h3>
-					<div class="menu__item-descr">${item.descr}</div>
+			
+			element.innerHTML = `
+					<img src=${this.caption} alt=${this.alt}>
+					<h3 class="menu__item-subtitle">${this.subtitle}</h3>
+					<div class="menu__item-descr">${this.descr}</div>
 					<div class="menu__item-divider"></div>
 					<div class="menu__item-price">
 							<div class="menu__item-cost">Цена:</div>
-							<div class="menu__item-total">
-									<span>${item.price}</span> руб/день
-							</div>
-					</div>`
-			this.parent.append(cardDiv);
-		})
-			
-
-		
-			// 	.then(data => {
-			// 		data.menu.forEach(item => {
-			// 		cardDiv.innerHTML = `
-			// 		<img src="${item.img}" alt="${item.altimg}">
-			// 		<h3 class="menu__item-subtitle">${item.title}</h3>
-			// 		<div class="menu__item-descr">${item.descr}</div>
-			// 		<div class="menu__item-divider"></div>
-			// 		<div class="menu__item-price">
-			// 				<div class="menu__item-cost">Цена:</div>
-			// 				<div class="menu__item-total">
-			// 						<span>${item.price}</span> руб/день
-			// 				</div>
-			// 		</div>`
-			// 		return this.parent.append(cardDiv);
-			// 		})
-					
-			
-				
-			// })
-		}
+							<div class="menu__item-total"><span>${this.price}</span> руб/день</div>
+					</div>
+			`;
+			this.parent.append(element);
+	}
 	}
 
-	const card = new CardItem();
+	axios.get('http://localhost:3000/menu')
+		.then(data => {
+			data.data.forEach(({img, altimg, title, descr, price}) => {
+				new CardItem(img, altimg, title, descr, price, '.menu .container').createCard();
+			});
+		});
 
-	card.createCard();
 
 
-	// const cardItem_1 = new CardItem(
-	// 	'img/tabs/vegy.jpg',
-	// 	'vegy',
-	// 	'Меню "Фитнес"',
-	// 	'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-	// 	15,
-	// 	70,
-	// 	'.menu .container');
-	// cardItem_1.createCard();
 
-	// const cardItem_2 = new CardItem(
-	// 	'img/tabs/elite.jpg',
-	// 	'elite',
-	// 	'Меню “Премиум”',
-	// 	'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-	// 	20,
-	// 	70,
-	// 	'.menu .container');
-	// cardItem_2.createCard();
-
-	// const cardItem_3 = new CardItem(
-	// 	'img/tabs/post.jpg',
-	// 	'post',
-	// 	'Меню "Постное"',
-	// 	'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-	// 	10,
-	// 	70,
-	// 	'.menu .container');
-
-	// cardItem_3.createCard();
 //--------------------------------------------------
 
 //-------------------------SERVER(FORMS) -----------------
@@ -278,8 +220,8 @@ forms.forEach(item => {
 	bindPostData(item);
 });
 
-const postData = (url, data) => {
-	const res = fetch(url {
+const postData = async (url, data) => {
+	const res = await fetch(url, {
 		method: "POST",
 		headers: {
 			'Content-type': 'application/json'
@@ -344,19 +286,59 @@ function showThanksModal(message) {
 		prevModalDialog.classList.remove('hide');
 		closeModal();
 	},4000)
+}	
+
+//--------------------- SLIDER ------------------------------
+
+
+const slideImg = document.querySelectorAll('.offer__slide'),
+			slideImgCurrent = document.querySelector('#current'),
+			slideImgTotal = document.querySelector('#total');
+
+hideSlideImg()
+
+
+function slideNumbers(arr) {
+	arr.forEach((item,i) => {
+		if(i<10) {
+			slideImgCurrent.innerHTML = `0${i}`;
+		} else {
+			slideImgCurrent.innerHTML = `${i}`;
+		}
+		if(arr.length<10) {
+			slideImgTotal.innerHTML = `0${arr.length}`;
+		} else {
+			slideImgTotal.innerHTML = `${arr.length}`;
+		}
+	})
 }
 
-	// fetch('db.json')
-	// 	.then(response => response.json())
-	// 	.then(data =>  {
-	// 		data.menu.forEach( (item,i) => {
-	// 			console.log(`${i} : ${item.title}`);
-	// 		})
-	// 	})
-		// .catch(err => err.text())
+slideNumbers(slideImg);
+showSlideImg();
+
+function showSlideImg() {
+	slideImg.forEach((item,i) => {
+		item[i].classList.add('show');
+		item[i].classList.remove('hide');
+	})
+}
+function hideSlideImg() {
+	slideImg.forEach((item,i) => {
+		item[i].classList.add('hide');
+		item[i].classList.remove('show');
+	})
+}
+
+// slideImg.forEach((item,i) => {
+// 	item.classList.add('hide');
+// })
 
 
 
-	
+
+
+
+
+
 })
 
