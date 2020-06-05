@@ -292,25 +292,22 @@ const postData = (url, data) => {
 
 
 function bindPostData(form) {
-		form.addEventListener('submit', (e) => {
-				e.preventDefault();
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
 
-				let statusMessage = document.createElement('img');
-				statusMessage.src = message.loading;
-				statusMessage.style.cssText = `
+		let statusMessage = document.createElement('img');
+		statusMessage.src = message.loading;
+		statusMessage.style.cssText = `
 						display: block;
 						margin: 0 auto;
 				`;
-				form.insertAdjacentElement('afterend', statusMessage);
-		
-				const formData = new FormData(form);
+		form.insertAdjacentElement('afterend', statusMessage);
 
-				const object = {};
-				formData.forEach(function(value, key){
-						object[key] = value;
-				});
+		const formData = new FormData(form);
 
-		postData('server.php', JSON.stringify(object))
+		const json = JSON.stringify(Object.fromEntries(formData.entries()))
+
+		postData('http://localhost:3000/requests', json)
 			.then(data => {
 				console.log(data);
 				showThanksModal(message.success);
