@@ -2284,46 +2284,57 @@ document.addEventListener('DOMContentLoaded', () => {
   } //--------------------- SLIDER ------------------------------
 
 
-  const slideImg = document.querySelectorAll('.offer__slide'),
+  const slidesImg = document.querySelectorAll('.offer__slide'),
         slideImgCurrent = document.querySelector('#current'),
-        slideImgTotal = document.querySelector('#total');
-  hideSlideImg();
+        slideImgTotal = document.querySelector('#total'),
+        sliderNextBtn = document.querySelector('.offer__slider-next'),
+        sliderPrevBtn = document.querySelector('.offer__slider-prev');
+  let indexSlide = 1;
+  hideAllSlideImg();
+  showSlides(indexSlide);
 
-  function slideNumbers(arr) {
-    arr.forEach((item, i) => {
-      if (i < 10) {
-        slideImgCurrent.innerHTML = `0${i}`;
-      } else {
-        slideImgCurrent.innerHTML = `${i}`;
-      }
+  if (slidesImg.length < 10) {
+    slideImgTotal.innerHTML = `0${slidesImg.length}`;
+  } else {
+    slideImgTotal.innerHTML = slidesImg.length;
+  }
 
-      if (arr.length < 10) {
-        slideImgTotal.innerHTML = `0${arr.length}`;
-      } else {
-        slideImgTotal.innerHTML = `${arr.length}`;
-      }
+  function showSlides(n) {
+    if (n > slidesImg.length) {
+      indexSlide = 1;
+    }
+
+    if (n < 1) {
+      indexSlide = slidesImg.length;
+    }
+
+    slidesImg.forEach(item => item.style.display = 'none');
+    slidesImg[indexSlide - 1].style.display = 'block';
+
+    if (indexSlide < 10) {
+      slideImgCurrent.innerHTML = `0${indexSlide}`;
+    } else {
+      slideImgCurrent.innerHTML = indexSlide;
+    }
+  }
+
+  function plusSlides(n) {
+    showSlides(indexSlide += n);
+  }
+
+  function hideAllSlideImg() {
+    slidesImg.forEach(item => {
+      item.classList.add('hide');
+      item.classList.remove('show');
     });
   }
 
-  slideNumbers(slideImg);
-  showSlideImg();
-
-  function showSlideImg() {
-    slideImg.forEach((item, i) => {
-      item[i].classList.add('show');
-      item[i].classList.remove('hide');
-    });
-  }
-
-  function hideSlideImg() {
-    slideImg.forEach((item, i) => {
-      item[i].classList.add('hide');
-      item[i].classList.remove('show');
-    });
-  } // slideImg.forEach((item,i) => {
-  // 	item.classList.add('hide');
-  // })
-
+  sliderNextBtn.addEventListener('click', () => {
+    plusSlides(1);
+  });
+  sliderPrevBtn.addEventListener('click', () => {
+    plusSlides(-1);
+  });
 });
 
 /***/ })
