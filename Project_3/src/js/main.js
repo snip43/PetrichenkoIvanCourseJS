@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// ------------- Timer -----------
 
-	const targetDate = new Date('2020,6,5');
+	const targetDate = new Date('2020,6,22');
 
 	function createDiffDate(endtime) {
 
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	})
 
-	const banner = setTimeout( openModal, 100000);
+	const banner = setTimeout(openModal, 100000);
 
 	function showModalByScroll() {
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	//-----------------Card Item ----------------------------------
 
 	class CardItem {
-		constructor(caption, alt, subtitle, descr, price,parentSelector,...classes) {
+		constructor(caption, alt, subtitle, descr, price, parentSelector, ...classes) {
 			this.caption = caption;
 			this.alt = alt;
 			this.subtitle = subtitle;
@@ -169,18 +169,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		changeToRub() {
 			this.price = this.price * this.courseChange;
 		}
-	
+
 		createCard() {
 			this.changeToRub();
 			const element = document.createElement('div');
 
 			if (this.classes.length === 0) {
-					this.classes = "menu__item";
-					element.classList.add(this.classes);
+				this.classes = "menu__item";
+				element.classList.add(this.classes);
 			} else {
-					this.classes.forEach(className => element.classList.add(className));
+				this.classes.forEach(className => element.classList.add(className));
 			}
-			
+
 			element.innerHTML = `
 					<img src=${this.caption} alt=${this.alt}>
 					<h3 class="menu__item-subtitle">${this.subtitle}</h3>
@@ -192,12 +192,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					</div>
 			`;
 			this.parent.append(element);
-	}
+		}
 	}
 
 	axios.get('http://localhost:3000/menu')
 		.then(data => {
-			data.data.forEach(({img, altimg, title, descr, price}) => {
+			data.data.forEach(({ img, altimg, title, descr, price }) => {
 				new CardItem(img, altimg, title, descr, price, '.menu .container').createCard();
 			});
 		});
@@ -205,229 +205,341 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-//--------------------------------------------------
+	//--------------------------------------------------
 
-//-------------------------SERVER(FORMS) -----------------
+	//-------------------------SERVER(FORMS) -----------------
 
-const forms = document.querySelectorAll('form');
-const message = {
+	const forms = document.querySelectorAll('form');
+	const message = {
 		loading: 'img/form/spinner.svg',
 		success: 'Спасибо! Скоро мы с вами свяжемся',
 		failure: 'Что-то пошло не так...'
-};
+	};
 
-forms.forEach(item => {
-	bindPostData(item);
-});
-
-const postData = async (url, data) => {
-	const res = await fetch(url, {
-		method: "POST",
-		headers: {
-			'Content-type': 'application/json'
-		},
-		body: data
+	forms.forEach(item => {
+		bindPostData(item);
 	});
+
+	const postData = async (url, data) => {
+		const res = await fetch(url, {
+			method: "POST",
+			headers: {
+				'Content-type': 'application/json'
+			},
+			body: data
+		});
 		return await res.json();
-}
+	}
 
 
 
-function bindPostData(form) {
-	form.addEventListener('submit', (e) => {
-		e.preventDefault();
+	function bindPostData(form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
 
-		let statusMessage = document.createElement('img');
-		statusMessage.src = message.loading;
-		statusMessage.style.cssText = `
+			let statusMessage = document.createElement('img');
+			statusMessage.src = message.loading;
+			statusMessage.style.cssText = `
 						display: block;
 						margin: 0 auto;
 				`;
-		form.insertAdjacentElement('afterend', statusMessage);
+			form.insertAdjacentElement('afterend', statusMessage);
 
-		const formData = new FormData(form);
+			const formData = new FormData(form);
 
-		const json = JSON.stringify(Object.fromEntries(formData.entries()))
+			const json = JSON.stringify(Object.fromEntries(formData.entries()))
 
-		postData('http://localhost:3000/requests', json)
-			.then(data => {
-				console.log(data);
-				showThanksModal(message.success);
-				statusMessage.remove();
-			})
-			.catch(() => {
-				showThanksModal(message.failure);
-			}).finally(() => {
-				form.reset();
-			});
-	});
-}
+			postData('http://localhost:3000/requests', json)
+				.then(data => {
+					console.log(data);
+					showThanksModal(message.success);
+					statusMessage.remove();
+				})
+				.catch(() => {
+					showThanksModal(message.failure);
+				}).finally(() => {
+					form.reset();
+				});
+		});
+	}
 
 
-function showThanksModal(message) {
-	const prevModalDialog = document.querySelector('.modal__dialog')
+	function showThanksModal(message) {
+		const prevModalDialog = document.querySelector('.modal__dialog')
 
-	prevModalDialog.classList.add('hide');
-	openModal();
+		prevModalDialog.classList.add('hide');
+		openModal();
 
-	const thanksModal = document.createElement('div');
-	thanksModal.classList.add('modal__dialog');
-	thanksModal.innerHTML = `
+		const thanksModal = document.createElement('div');
+		thanksModal.classList.add('modal__dialog');
+		thanksModal.innerHTML = `
 		<div class="modal__content">
 			<div class="modal__title">${message}</div>
 			<div class="modal__close" data-close>&times;</div>
 		</div>
 	`;
 
-	document.querySelector('.modal').append(thanksModal);
-	setTimeout(()=> {
-		thanksModal.remove();
-		prevModalDialog.classList.add('show');
-		prevModalDialog.classList.remove('hide');
-		closeModal();
-	},4000)
-}	
+		document.querySelector('.modal').append(thanksModal);
+		setTimeout(() => {
+			thanksModal.remove();
+			prevModalDialog.classList.add('show');
+			prevModalDialog.classList.remove('hide');
+			closeModal();
+		}, 4000)
+	}
 
-//--------------------- SLIDER ------------------------------
+	//--------------------- SLIDER ------------------------------
+	let offset = 0;
+	let slideIndex = 1;
+
+	const slides = document.querySelectorAll('.offer__slide'),
+		slider = document.querySelector('.offer__slider'),
+		prev = document.querySelector('.offer__slider-prev'),
+		next = document.querySelector('.offer__slider-next'),
+		total = document.querySelector('#total'),
+		current = document.querySelector('#current'),
+		slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+		width = window.getComputedStyle(slidesWrapper).width,
+		slidesField = document.querySelector('.offer__slider-inner');
+
+	if (slides.length < 10) {
+		total.textContent = `0${slides.length}`;
+		current.textContent = `0${slideIndex}`;
+	} else {
+		total.textContent = slides.length;
+		current.textContent = slideIndex;
+	}
+
+	slidesField.style.width = 100 * slides.length + '%';
+	slidesField.style.display = 'flex';
+	slidesField.style.transition = '0.5s all';
+
+	slidesWrapper.style.overflow = 'hidden';
+
+	slides.forEach(slide => {
+		slide.style.width = width;
+	});
+
+	slider.style.position = 'relative';
+
+	const indicators = document.createElement('ol'),
+		dots = [];
+	indicators.classList.add('carousel-indicators');
+	indicators.style.cssText = `
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 15;
+        display: flex;
+        justify-content: center;
+        margin-right: 15%;
+        margin-left: 15%;
+        list-style: none;
+    `; // Если хотите - добавьте в стили, но иногда у нас нет доступа к стилям
+	slider.append(indicators);
+
+	for (let i = 0; i < slides.length; i++) {
+		const dot = document.createElement('li');
+		dot.setAttribute('data-slide-to', i + 1);
+		dot.style.cssText = `
+            box-sizing: content-box;
+            flex: 0 1 auto;
+            width: 30px;
+            height: 6px;
+            margin-right: 3px;
+            margin-left: 3px;
+            cursor: pointer;
+            background-color: #fff;
+            background-clip: padding-box;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            opacity: .5;
+            transition: opacity .6s ease;
+        `;
+		if (i == 0) {
+			dot.style.opacity = 1;
+		}
+		indicators.append(dot);
+		dots.push(dot);
+	}
+
+	function numberOfString(str) {
+		return +str.replace(/\D/g, '')
+	}
+
+	next.addEventListener('click', () => {
+		if (offset == numberOfString(width) * (slides.length - 1)) {
+			offset = 0;
+		} else {
+			offset += numberOfString(width);
+		}
+
+		slidesField.style.transform = `translateX(-${offset}px)`;
 
 
-const slidesImg = document.querySelectorAll('.offer__slide'),
-			slideImgCurrent = document.querySelector('#current'),
-			slideImgTotal = document.querySelector('#total'),
-			sliderNextBtn = document.querySelector('.offer__slider-next'),
-			sliderPrevBtn = document.querySelector('.offer__slider-prev'),
-			slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-			slidesField = document.querySelector('.offer__slider-inner'),
-			width = window.getComputedStyle(slidesWrapper).width;
 
-let indexSlide = 1;
-let offset = 0;
+		if (slideIndex == slides.length) {
+			slideIndex = 1;
+		} else {
+			slideIndex++;
+		}
 
-if(slidesImg.length < 10) {
-	slideImgTotal.innerHTML = `0${slidesImg.length}`;
-	slideImgCurrent.innerHTML =`0${indexSlide}`
-} else {
-	slideImgTotal.innerHTML = slidesImg.length;
-	slideImgCurrent.innerHTML = indexSlide;
+		if (slides.length < 10) {
+			current.textContent = `0${slideIndex}`;
+		} else {
+			current.textContent = slideIndex;
+		}
+
+		dots.forEach(dot => dot.style.opacity = ".5");
+		dots[slideIndex - 1].style.opacity = 1;
+	});
+
+
+
+	prev.addEventListener('click', () => {
+		if (offset == 0) {
+			offset = numberOfString(width) * (slides.length - 1);
+		} else {
+			offset -= numberOfString(width);
+		}
+
+		slidesField.style.transform = `translateX(-${offset}px)`;
+
+		if (slideIndex == 1) {
+			slideIndex = slides.length;
+		} else {
+			slideIndex--;
+		}
+
+		if (slides.length < 10) {
+			current.textContent = `0${slideIndex}`;
+		} else {
+			current.textContent = slideIndex;
+		}
+
+		dots.forEach(dot => dot.style.opacity = ".5");
+		dots[slideIndex - 1].style.opacity = 1;
+	});
+
+	dots.forEach(dot => {
+		dot.addEventListener('click', (e) => {
+			const slideTo = e.target.getAttribute('data-slide-to');
+
+			slideIndex = slideTo;
+			offset = numberOfString(width) * (slideTo - 1);
+
+			slidesField.style.transform = `translateX(-${offset}px)`;
+
+			if (slides.length < 10) {
+				current.textContent = `0${slideIndex}`;
+			} else {
+				current.textContent = slideIndex;
+			}
+
+			dots.forEach(dot => dot.style.opacity = ".5");
+			dots[slideIndex - 1].style.opacity = 1;
+		});
+	});
+
+	//----------------------- Calculator ------------------------------
+
+	const result = document.querySelector('.calculating__result span');
+			
+	let sex = 'female',
+		height,
+		weight,
+		age,
+		ratio = 1.375;
+
+	function calc() {
+		height = +document.querySelector('#height').value,
+			weight = +document.querySelector('#weight').value,
+			age = +document.querySelector('#age').value;
+
+		if (!sex || !height || !age || !weight || !ratio) {
+			result.innerHTML = '___';
+			return;
+		}
+
+		if (sex === 'female') {
+			result.innerHTML = Math.round(447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age) * ratio);
+		} else {
+			result.innerHTML = Math.round(88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age) * ratio);
+		}
+
+	}
+
+	function removeElem (arr,activeClass) {
+		arr.forEach( elem => {
+			elem.classList.remove(activeClass);
+		})
+	}
+
+	function genderInfo() {
+		const gender = document.querySelectorAll('[data-sex]');
+
+		gender.forEach(item => {
+			item.addEventListener('click', (e) => {
+				removeElem(gender,'calculating__choose-item_active');
+				if (e.target.getAttribute('id') == 'female') {
+					sex = 'female';
+				} else {
+					sex = 'male';
+				}
+				e.target.classList.add('calculating__choose-item_active');
+				calc();
+			});
+		})
+	}
+
+	function activityInfo() {
+		const elements = document.querySelectorAll('.calculating__choose_big .calculating__choose-item');
+
+		elements.forEach(item => {
+			item.addEventListener('click', (e) => {
+				removeElem(elements,'calculating__choose-item_active');
+				switch (e.target.getAttribute('id')) {
+					case 'low':
+						ratio = 1.2;
+						break;
+					case 'small':
+						ratio = 1.375;
+						break;
+					case 'medium':
+						ratio = 1.55;
+						break;
+					case 'high':
+						ratio = 1.725;
+						break;
+					default:
+						ratio = 1.375;
+				}
+				e.target.classList.add('calculating__choose-item_active');
+				calc();
+			})
+		})
+	}
+
+function inputChange() {
+	const inputs = document.querySelectorAll('.calculating__choose_medium input');
+
+	inputs.forEach(input => {
+		input.addEventListener('input', () => {
+			calc();
+		})
+	})
 }
 
+function getTotalValue() {
+	calc();
+	genderInfo();
+	activityInfo();
+	inputChange();
+}
+
+getTotalValue();
 
 
-slidesField.style.width = 100 * slidesImg.length + '%'; //ширина всех слайдов(чтобы все помещались)
-slidesField.style.display = 'flex';
-slidesField.style.transition = '0.5s all'
-
-slidesWrapper.style.overflow = 'hidden'
-
-slidesImg.forEach(slide => {		// перебор всех слайдов,и установка всем одинаковой ширины
-	slide.style.width = width;
-})
-
-sliderNextBtn.addEventListener('click', ()=> {
-	if(offset == +width.slice(0, width.length -2) * (slidesImg.length - 1)) {  // когда дойдет до последнего слайда =Ю сбрасываем отступ
-		offset = 0;
-	} else {
-		offset += +width.slice(0, width.length -2);
-	}
-
-	slidesField.style.transform = `translateX(-${offset}px)`;
-
-	if(indexSlide == slidesImg.length) {
-		indexSlide =1;
-	} else {
-		indexSlide++;
-	}
-
-	if(slidesImg.length < 10) {
-		slideImgCurrent.innerHTML = `0${indexSlide}`
-	} else {
-		slideImgCurrent.innerHTML = indexSlide
-	}
-})
-
-
-sliderPrevBtn.addEventListener('click', ()=> {
-	if(offset == 0) {  // когда дойдет до последнего слайда =Ю сбрасываем отступ
-		offset = +width.slice(0, width.length -2) * (slidesImg.length - 1);
-	} else {
-		offset -= +width.slice(0, width.length -2);
-	}
-
-	slidesField.style.transform = `translateX(-${offset}px)`;
-
-	if(indexSlide == 1) {
-		indexSlide = slidesImg.length;
-	} else {
-		indexSlide--;
-	}
-
-	if(slidesImg.length < 10) {
-		slideImgCurrent.innerHTML = `0${indexSlide}`;
-	} else {
-		slideImgCurrent.innerHTML = indexSlide
-	}
-})
-
-// hideAllSlideImg();
-// showSlides(indexSlide);
-// if(slidesImg.length < 10) {
-// 	slideImgTotal.innerHTML = `0${slidesImg.length}`;
-// } else {
-// 	slideImgTotal.innerHTML = slidesImg.length;
-// }
-
-
-// function showSlides(n) {
-	
-// 	if(n > slidesImg.length) {
-// 		indexSlide = 1;
-// 	}
-
-// 	if(n < 1) {
-// 		indexSlide = slidesImg.length;
-// 	}
-// 	slidesImg.forEach(item => item.style.display = 'none');
-// 	slidesImg[indexSlide-1].style.display = 'block';
-
-// 	if(indexSlide < 10) {
-// 		slideImgCurrent.innerHTML = `0${indexSlide}`;
-// 	} else {
-// 		slideImgCurrent.innerHTML = indexSlide;
-// 	}
-
-// }
-
-// function plusSlides(n) {
-// 	showSlides(indexSlide += n);
-// }
-
-// function hideAllSlideImg() {
-// 	slidesImg.forEach((item) => {
-// 		item.classList.add('hide');
-// 		item.classList.remove('show');
-// 	})
-// }
-
-// sliderNextBtn.addEventListener('click', () => {
-// 	plusSlides(1)
-// })
-
-// sliderPrevBtn.addEventListener('click', ()=> {
-// 	plusSlides(-1)
-// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-})
+});
 
