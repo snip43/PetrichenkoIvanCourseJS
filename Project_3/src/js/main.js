@@ -499,6 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		elements.forEach(item => {
 			item.addEventListener('click', (e) => {
 				removeElem(elements,'calculating__choose-item_active');
+				
 				switch (e.target.getAttribute('id')) {
 					case 'low':
 						ratio = 1.2;
@@ -525,7 +526,14 @@ function inputChange() {
 	const inputs = document.querySelectorAll('.calculating__choose_medium input');
 
 	inputs.forEach(input => {
+
+
 		input.addEventListener('input', () => {
+			if(input.value.match(/\D/g)) {
+				input.style.border = '2px solid red';
+			} else {
+				input.style.border = 'none';
+			}
 			calc();
 		})
 	})

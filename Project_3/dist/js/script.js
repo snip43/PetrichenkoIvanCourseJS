@@ -3069,6 +3069,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputs = document.querySelectorAll('.calculating__choose_medium input');
     inputs.forEach(input => {
       input.addEventListener('input', () => {
+        if (input.value.match(/\D/g)) {
+          input.style.border = '2px solid red';
+        } else {
+          input.style.border = 'none';
+        }
+
         calc();
       });
     });
