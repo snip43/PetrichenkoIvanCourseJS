@@ -2987,11 +2987,49 @@ document.addEventListener('DOMContentLoaded', () => {
   }); //----------------------- Calculator ------------------------------
 
   const result = document.querySelector('.calculating__result span');
-  let sex = 'female',
-      height,
-      weight,
-      age,
+  let sex, height, weight, age, ratio;
+
+  function initialSex() {
+    if (localStorage.getItem('sex')) {
+      sex = localStorage.getItem('sex');
+    } else {
+      sex = 'female';
+      localStorage.setItem('sex', 'female');
+    }
+  }
+
+  function initialRatio() {
+    if (localStorage.getItem('ratio')) {
+      let rat = localStorage.getItem('ratio');
+
+      switch (rat) {
+        case 'low':
+          ratio = 1.2;
+          break;
+
+        case 'small':
+          ratio = 1.375;
+          break;
+
+        case 'medium':
+          ratio = 1.55;
+          break;
+
+        case 'high':
+          ratio = 1.725;
+          break;
+
+        default:
+          ratio = 1.375;
+      }
+    } else {
       ratio = 1.375;
+      localStorage.setItem('ratio', 'small');
+    }
+  }
+
+  initialSex();
+  initialRatio();
 
   function calc() {
     height = +document.querySelector('#height').value, weight = +document.querySelector('#weight').value, age = +document.querySelector('#age').value;
@@ -3016,14 +3054,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function genderInfo() {
     const gender = document.querySelectorAll('[data-sex]');
+    removeElem(gender, 'calculating__choose-item_active');
     gender.forEach(item => {
+      if (item.getAttribute('id') === localStorage.getItem('sex')) {
+        item.classList.add('calculating__choose-item_active');
+      }
+
       item.addEventListener('click', e => {
         removeElem(gender, 'calculating__choose-item_active');
 
-        if (e.target.getAttribute('id') == 'female') {
+        if (e.target.getAttribute('id') === 'female') {
           sex = 'female';
+          localStorage.setItem('sex', 'female');
         } else {
           sex = 'male';
+          localStorage.setItem('sex', 'male');
         }
 
         e.target.classList.add('calculating__choose-item_active');
@@ -3034,25 +3079,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function activityInfo() {
     const elements = document.querySelectorAll('.calculating__choose_big .calculating__choose-item');
+    removeElem(elements, 'calculating__choose-item_active');
     elements.forEach(item => {
+      if (item.getAttribute('id') === localStorage.getItem('ratio')) {
+        item.classList.add('calculating__choose-item_active');
+      }
+
       item.addEventListener('click', e => {
         removeElem(elements, 'calculating__choose-item_active');
 
         switch (e.target.getAttribute('id')) {
           case 'low':
             ratio = 1.2;
+            localStorage.setItem('ratio', 'low');
             break;
 
           case 'small':
             ratio = 1.375;
+            localStorage.setItem('ratio', 'small');
             break;
 
           case 'medium':
             ratio = 1.55;
+            localStorage.setItem('ratio', 'medium');
             break;
 
           case 'high':
             ratio = 1.725;
+            localStorage.setItem('ratio', 'high');
             break;
 
           default:
