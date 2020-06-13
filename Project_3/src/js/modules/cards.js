@@ -1,3 +1,5 @@
+import { getResourses } from "../services/services";
+
 function cards() {
 	class CardItem {
 		constructor(caption, alt, subtitle, descr, price, parentSelector, ...classes) {
@@ -40,12 +42,12 @@ function cards() {
 		}
 	}
 
-	axios.get('http://localhost:3000/menu')
-		.then(data => {
-			data.data.forEach(({ img, altimg, title, descr, price }) => {
-				new CardItem(img, altimg, title, descr, price, '.menu .container').createCard();
-			});
-		});
+axios.get('http://localhost:3000/menu')
+.then(data => {
+	data.data.forEach(({ img, altimg, title, descr, price }) => {
+		new CardItem(img, altimg, title, descr, price, '.menu .container').createCard();
+	});
+});
 
 }
 

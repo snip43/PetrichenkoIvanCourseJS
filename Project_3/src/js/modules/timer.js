@@ -1,5 +1,4 @@
-function timer() {
-	const targetDate = new Date('2020,6,22');
+function timer(id, targetDate) {
 
 	function createDiffDate(endtime) {
 
@@ -55,7 +54,7 @@ function timer() {
 
 	}
 
-	insertTimerBlock('.timer', targetDate)
+	insertTimerBlock(id, targetDate)
 }
 
 export default timer;

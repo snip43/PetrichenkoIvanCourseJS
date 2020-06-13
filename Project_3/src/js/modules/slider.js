@@ -1,16 +1,16 @@
-function slider() {
+function slider({sliderOffer,slidesOffers,prevOffer,nextOffer,currentOffer,slidesWrapperOffer, slidesFieldOffer, totalOffer}) {
 	let offset = 0;
 	let slideIndex = 1;
 
-	const slides = document.querySelectorAll('.offer__slide'),
-		slider = document.querySelector('.offer__slider'),
-		prev = document.querySelector('.offer__slider-prev'),
-		next = document.querySelector('.offer__slider-next'),
-		total = document.querySelector('#total'),
-		current = document.querySelector('#current'),
-		slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+	const slides = document.querySelectorAll(slidesOffers),
+		slider = document.querySelector(sliderOffer),
+		prev = document.querySelector(prevOffer),
+		next = document.querySelector(nextOffer),
+		total = document.querySelector(totalOffer),
+		current = document.querySelector(currentOffer),
+		slidesWrapper = document.querySelector(slidesWrapperOffer),
 		width = window.getComputedStyle(slidesWrapper).width,
-		slidesField = document.querySelector('.offer__slider-inner');
+		slidesField = document.querySelector(slidesFieldOffer);
 
 	if (slides.length < 10) {
 		total.textContent = `0${slides.length}`;

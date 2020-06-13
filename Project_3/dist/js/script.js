@@ -2605,17 +2605,26 @@ __webpack_require__.r(__webpack_exports__);
 document.addEventListener('DOMContentLoaded', () => {
   const banner = setTimeout(() => Object(_modules_modal__WEBPACK_IMPORTED_MODULE_2__["openModal"])('.modal', banner), 100000); // --------Tabs --------------------
 
-  Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_1__["default"])(); // ------------- Timer -----------
+  Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_1__["default"])('.tabheader__item', '.tabcontent', '.tabheader__items', 'tabheader__item_active'); // ------------- Timer -----------
 
-  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_0__["default"])(); //------------------------ Modal window -----------------------
+  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_0__["default"])('.timer', '2020-06-18'); //------------------------ Modal window -----------------------
 
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_2__["default"])('[data-modal]', '.modal', banner); //-----------------Card Item ----------------------------------
 
-  Object(_modules_cards__WEBPACK_IMPORTED_MODULE_3__["default"])(banner); //-------------------------SERVER(FORMS) -----------------
+  Object(_modules_cards__WEBPACK_IMPORTED_MODULE_3__["default"])(); //-------------------------SERVER(FORMS) -----------------
 
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"])(); //--------------------- SLIDER ------------------------------
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"])('form', banner); //--------------------- SLIDER ------------------------------
 
-  Object(_modules_slider__WEBPACK_IMPORTED_MODULE_5__["default"])(); //----------------------- Calculator ------------------------------
+  Object(_modules_slider__WEBPACK_IMPORTED_MODULE_5__["default"])({
+    sliderOffer: '.offer__slider',
+    slidesOffers: '.offer__slide',
+    prevOffer: '.offer__slider-prev',
+    nextOffer: '.offer__slider-next',
+    currentOffer: '#current',
+    slidesWrapperOffer: '.offer__slider-wrapper',
+    slidesFieldOffer: '.offer__slider-inner',
+    totalOffer: '#total'
+  }); //----------------------- Calculator ------------------------------
 
   Object(_modules_calculator__WEBPACK_IMPORTED_MODULE_6__["default"])();
 });
@@ -2803,6 +2812,9 @@ function calculator() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _services_services__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/services */ "./src/js/services/services.js");
+
+
 function cards() {
   class CardItem {
     constructor(caption, alt, subtitle, descr, price, parentSelector, ...classes) {
@@ -2877,12 +2889,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _services_services__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/services */ "./src/js/services/services.js");
 
 
 
 
-function forms(timerId) {
-  const forms = document.querySelectorAll('form');
+
+function forms(formSelector, timerId) {
+  const forms = document.querySelectorAll(formSelector);
   const message = {
     loading: 'img/form/spinner.svg',
     success: 'Спасибо! Скоро мы с вами свяжемся',
@@ -2891,17 +2905,6 @@ function forms(timerId) {
   forms.forEach(item => {
     bindPostData(item);
   });
-
-  const postData = async (url, data) => {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: data
-    });
-    return await res.json();
-  };
 
   function bindPostData(form) {
     form.addEventListener('submit', e => {
@@ -2915,7 +2918,7 @@ function forms(timerId) {
       form.insertAdjacentElement('afterend', statusMessage);
       const formData = new FormData(form);
       const json = JSON.stringify(Object.fromEntries(formData.entries()));
-      postData('http://localhost:3000/requests', json).then(data => {
+      Object(_services_services__WEBPACK_IMPORTED_MODULE_3__["postData"])('http://localhost:3000/requests', json).then(data => {
         console.log(data);
         showThanksModal(message.success);
         statusMessage.remove();
@@ -2966,10 +2969,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "closeModal", function() { return closeModal; });
 function openModal(modalSelector, timerId) {
   const modalW = document.querySelector(modalSelector);
-  modalW.classList.toggle('show');
-  document.body.classList.add('overFix');
-  clearInterval(timerId);
-  console.log(timerId);
+  modalW.classList.add('show');
+  modalW.classList.remove('hide');
+  document.body.style.overflow = 'hidden'; // document.body.classList.add('overFix');
 
   if (timerId) {
     clearInterval(timerId);
@@ -2977,8 +2979,9 @@ function openModal(modalSelector, timerId) {
 }
 function closeModal(modalSelector) {
   const modalW = document.querySelector(modalSelector);
-  modalW.classList.toggle('show');
-  document.body.classList.remove('overFix');
+  modalW.classList.add('hide');
+  modalW.classList.remove('show');
+  document.body.style.overflow = '';
 }
 
 function modal(triggerSelector, modalSelector, timerId) {
@@ -2988,15 +2991,24 @@ function modal(triggerSelector, modalSelector, timerId) {
     item.addEventListener('click', () => openModal(modalSelector, timerId));
   });
   modalW.addEventListener('click', e => {
-    if (e.target.classList.contains('show') || e.target.classList.contains('modal__close')) {
+    if (e.target === modal || e.target.getAttribute('data-close') == "") {
       closeModal(modalSelector);
     }
-  });
+  }); // modalW.addEventListener('click', (e) => {
+  // 	if (e.target.classList.contains('show') || e.target.classList.contains('modal__close')) {
+  // 		closeModal(modalSelector);
+  // 	}
+  // })
+
   document.addEventListener('keydown', e => {
-    if (e.code === 'Escape') {
+    if (e.code === "Escape" && modal.classList.contains('show')) {
       closeModal(modalSelector);
     }
-  });
+  }); // document.addEventListener('keydown', (e) => {
+  // 	if (e.code === 'Escape') {
+  // 		closeModal(modalSelector);
+  // 	}
+  // })
 
   function showModalByScroll() {
     if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -3025,18 +3037,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0__);
 
 
-function slider() {
+function slider({
+  sliderOffer,
+  slidesOffers,
+  prevOffer,
+  nextOffer,
+  currentOffer,
+  slidesWrapperOffer,
+  slidesFieldOffer,
+  totalOffer
+}) {
   let offset = 0;
   let slideIndex = 1;
-  const slides = document.querySelectorAll('.offer__slide'),
-        slider = document.querySelector('.offer__slider'),
-        prev = document.querySelector('.offer__slider-prev'),
-        next = document.querySelector('.offer__slider-next'),
-        total = document.querySelector('#total'),
-        current = document.querySelector('#current'),
-        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+  const slides = document.querySelectorAll(slidesOffers),
+        slider = document.querySelector(sliderOffer),
+        prev = document.querySelector(prevOffer),
+        next = document.querySelector(nextOffer),
+        total = document.querySelector(totalOffer),
+        current = document.querySelector(currentOffer),
+        slidesWrapper = document.querySelector(slidesWrapperOffer),
         width = window.getComputedStyle(slidesWrapper).width,
-        slidesField = document.querySelector('.offer__slider-inner');
+        slidesField = document.querySelector(slidesFieldOffer);
 
   if (slides.length < 10) {
     total.textContent = `0${slides.length}`;
@@ -3183,10 +3204,10 @@ function slider() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function tabs() {
-  const tabs = document.querySelectorAll('.tabheader__item'),
-        tabsContent = document.querySelectorAll('.tabcontent'),
-        parentTabs = document.querySelector('.tabheader__items');
+function tabs(tabsSelector, tabsContentSelector, tabsParentSelector, activeClass) {
+  const tabs = document.querySelectorAll(tabsSelector),
+        tabsContent = document.querySelectorAll(tabsContentSelector),
+        parentTabs = document.querySelector(tabsParentSelector);
 
   function hideTabContent() {
     tabsContent.forEach(item => {
@@ -3194,14 +3215,14 @@ function tabs() {
       item.classList.remove('show', 'fade');
     });
     tabs.forEach(item => {
-      item.classList.remove('tabheader__item_active');
+      item.classList.remove(activeClass);
     });
   }
 
   function showTabsContent(i = 0) {
     tabsContent[i].classList.add('show', 'fade');
     tabsContent[i].classList.remove('hide');
-    tabs[i].classList.add('tabheader__item_active');
+    tabs[i].classList.add(activeClass);
   }
 
   hideTabContent();
@@ -3209,7 +3230,7 @@ function tabs() {
   parentTabs.addEventListener('click', e => {
     const target = e.target;
     tabs.forEach((item, i) => {
-      if (target == item && !target.classList.contains('tabheader__item_active')) {
+      if (target == item && !target.classList.contains(activeClass)) {
         hideTabContent();
         showTabsContent(i);
       }
@@ -3230,9 +3251,7 @@ function tabs() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function timer() {
-  const targetDate = new Date('2020,6,22');
-
+function timer(id, targetDate) {
   function createDiffDate(endtime) {
     const timerDate = Date.parse(endtime) - new Date();
     const leftDays = Math.floor(timerDate / (1000 * 60 * 60 * 24));
@@ -3279,10 +3298,33 @@ function timer() {
     }
   }
 
-  insertTimerBlock('.timer', targetDate);
+  insertTimerBlock(id, targetDate);
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (timer);
+
+/***/ }),
+
+/***/ "./src/js/services/services.js":
+/*!*************************************!*\
+  !*** ./src/js/services/services.js ***!
+  \*************************************/
+/*! exports provided: postData */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "postData", function() { return postData; });
+const postData = async (url, data) => {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      'Content-type': 'application/json'
+    },
+    body: data
+  });
+  return await res.json();
+};
 
 /***/ })
 
